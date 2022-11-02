@@ -51,8 +51,9 @@ def compute_mandelbrot(width=cur_width, height=cur_height, center=cur_center, ex
 
     return mandelbrot(c_grid, max_iter)
 
+def random_samples(rng, boundaries, n):
+    re_min, re_max, im_min, im_max = boundaries
+    re = rng.uniform(low=re_min,high=re_max, size=n)
+    im = rng.uniform(low=im_min,high=im_max, size=n) * 1j
 
-
-
-
-niters = compute_mandelbrot() # 17 ms
+    return re + im
