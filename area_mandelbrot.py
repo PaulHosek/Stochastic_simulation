@@ -1,7 +1,7 @@
 import numba as nb
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
+from collections import Counter
 import os
 
 cur_center = -0.8 + 0.0j
@@ -65,7 +65,7 @@ def area(func, bounds, s, i):
     samples = func(re_min,re_max,im_min,im_max,rng,s,rng2)
 
     # Check if the samples are part of the MB-set
-    res = am.mandelbrot(samples, i)
+    res = mandelbrot(samples, i)
     ct_res = Counter(res)
 
     # Calculate the area
