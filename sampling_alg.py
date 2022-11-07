@@ -3,8 +3,7 @@ from itertools import product
 import math
 rng = np.random.default_rng(0)
 
-
-def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples):
+def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2):
     """
     Pure random sampling
     :param re_min: minimal real value
@@ -14,13 +13,12 @@ def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples):
     :param n_samples: number of samples drawn
     :return: complex number array of len(n_samples)
     """
-    print(re_min, re_max)
+    # print(re_min, re_max)
     re = rng.uniform(low=re_min, high=re_max, size=n_samples)
     im = rng.uniform(low=im_min, high=im_max, size=n_samples) * 1j
     return re + im
 
-
-def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples):
+def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2):
     """
     Latin hypercube sampling.
 
@@ -46,7 +44,6 @@ def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples):
         im_samples[square] = rng.uniform(low=im_grid[square], high=im_grid[square + 1])
 
     return rng.permutation(real_samples) + im_samples * 1j
-
 
 def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2):
     """
