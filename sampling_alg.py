@@ -17,10 +17,14 @@ def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=Fa
     """
     # print(re_min, re_max)
     re = rng.uniform(low=re_min, high=re_max, size=n_samples)
-    im = rng.uniform(low=im_min, high=im_max, size=n_samples) * 1j
+    im = rng.uniform(low=im_min, high=im_max, size=n_samples)
     if antithetic:
-        return -0.5-(re+0.5) + (-1*im)
-    return re + im
+        mid_point_re = re_max - np.abs(re_min - re_max)/2
+        re = re + 2*(re - mid_point_re)
+        mid_point_im = im_max - np.abs(im_min - im_max)/2
+        im = im + 2*(im - mid_point_im)
+        return re + im * 1j
+    return re + im * 1j
 
 def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=False):
     """
@@ -48,7 +52,12 @@ def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=Fa
         im_samples[square] = rng.uniform(low=im_grid[square], high=im_grid[square + 1])
 
     if antithetic:
-        return -0.5 - (real_samples + 0.5) + (-1 * rng.permutation(im_samples * 1j))
+        mid_point_re = re_max - np.abs(re_min - re_max) / 2
+        real_samples = real_samples + 2 * (real_samples - mid_point_re)
+        mid_point_im = im_max - np.abs(im_min - im_max) / 2
+        im_samples = im_samples + 2 * (im_samples - mid_point_im)
+        return real_samples + rng.permutation(im_samples * 1j)
+
     return real_samples + rng.permutation(im_samples * 1j)
 
 def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antithetic=False):
@@ -89,6 +98,13 @@ def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antitheti
     imag += im_min
     real *= (re_max - re_min) / n_subspaces**2
     real += re_min
+
+
     if antithetic:
-        return -0.5 - (real + 0.5) + (-1 * rng.permutation(imag * 1j))
+        mid_point_re = re_max - np.abs(re_min - re_max) / 2
+        real = real + 2 * (real - mid_point_re)
+        mid_point_im = im_max - np.abs(im_min - im_max) / 2
+        imag = imag + 2 * (imag - mid_point_im)
+        return real + imag * 1j
+
     return real + imag * 1j
