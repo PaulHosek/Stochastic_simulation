@@ -5,8 +5,7 @@ rng = np.random.default_rng(0)
 from collections import Counter
 import numba as nb
 
-# @nb.vectorize
-def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2):
+def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=False):
     """
     Pure random sampling
     :param re_min: minimal real value
@@ -19,11 +18,11 @@ def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2):
     # print(re_min, re_max)
     re = rng.uniform(low=re_min, high=re_max, size=n_samples)
     im = rng.uniform(low=im_min, high=im_max, size=n_samples) * 1j
+    if antithetic:
+        return -0.5-(re+0.5) + (-1*im)
     return re + im
 
-
-# @nb.vectorize
-def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2):
+def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=False):
     """
     Latin hypercube sampling.
 
@@ -48,11 +47,11 @@ def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2):
         real_samples[square] = rng.uniform(low=real_grid[square], high=real_grid[square + 1])
         im_samples[square] = rng.uniform(low=im_grid[square], high=im_grid[square + 1])
 
-    return rng.permutation(real_samples) + im_samples * 1j
+    if antithetic:
+        return -0.5 - (real_samples + 0.5) + (-1 * rng.permutation(im_samples * 1j))
+    return real_samples + rng.permutation(im_samples * 1j)
 
-
-# @nb.vectorize
-def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2):
+def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antithetic=False):
     """
     Orthogonal sampling
 
@@ -90,5 +89,6 @@ def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2):
     imag += im_min
     real *= (re_max - re_min) / n_subspaces**2
     real += re_min
-
+    if antithetic:
+        return -0.5 - (real + 0.5) + (-1 * rng.permutation(imag * 1j))
     return real + imag * 1j
