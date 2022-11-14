@@ -13,7 +13,7 @@ cur_width = resulution  # (x axis); real numbers
 cur_height = resulution# (y axis); imaginary
 
 cur_max_iter = resulution # convergence test search depth
-#%%
+
 @nb.vectorize
 def mandelbrot(c, max_iter=cur_max_iter):
     """
@@ -56,6 +56,7 @@ def random_samples(rng, boundaries, n):
 
     return re + im
 
+# @nb.vectorize
 def area(func, bounds, s, i):
     # Initialize the grid and create samples
     rng = np.random.default_rng()

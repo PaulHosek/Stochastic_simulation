@@ -2,7 +2,10 @@ import numpy as np
 from itertools import product
 import math
 rng = np.random.default_rng(0)
+from collections import Counter
+import numba as nb
 
+# @nb.vectorize
 def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2):
     """
     Pure random sampling
@@ -18,6 +21,8 @@ def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2):
     im = rng.uniform(low=im_min, high=im_max, size=n_samples) * 1j
     return re + im
 
+
+# @nb.vectorize
 def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2):
     """
     Latin hypercube sampling.
@@ -45,6 +50,8 @@ def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2):
 
     return rng.permutation(real_samples) + im_samples * 1j
 
+
+# @nb.vectorize
 def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2):
     """
     Orthogonal sampling
