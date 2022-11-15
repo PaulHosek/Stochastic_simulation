@@ -16,14 +16,18 @@ def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=Fa
     :return: complex number array of len(n_samples)
     """
     # print(re_min, re_max)
+    if antithetic:
+        n_samples //= 2
     re = rng.uniform(low=re_min, high=re_max, size=n_samples)
     im = rng.uniform(low=im_min, high=im_max, size=n_samples)
+
     if antithetic:
         mid_point_re = re_max - np.abs(re_min - re_max)/2
-        re = re + 2*(re - mid_point_re)
+        re_anti = re + 2*(re - mid_point_re)
         mid_point_im = im_max - np.abs(im_min - im_max)/2
-        im = im + 2*(im - mid_point_im)
-        return re + im * 1j
+        im_anti = im + 2*(im - mid_point_im)
+        return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
+
     return re + im * 1j
 
 def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=False):
@@ -38,27 +42,43 @@ def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=Fa
     :param rng: np random generator object
     :return: complex number array of len(n_samples)
     """
-
+    if antithetic:
+        n_samples //= 2
     # generate 2d grid with equal spacing
     real_grid = np.linspace(re_min, re_max, n_samples + 1)
     im_grid = np.linspace(im_min, im_max, n_samples + 1)
 
-    im_samples = np.empty(n_samples)
-    real_samples = np.empty(n_samples)
+    im = np.empty(n_samples)
+    re = np.empty(n_samples)
 
     # for each square, generate a uniform sample
     for square in range(n_samples):
-        real_samples[square] = rng.uniform(low=real_grid[square], high=real_grid[square + 1])
-        im_samples[square] = rng.uniform(low=im_grid[square], high=im_grid[square + 1])
+        re[square] = rng.uniform(low=real_grid[square], high=real_grid[square + 1])
+        im[square] = rng.uniform(low=im_grid[square], high=im_grid[square + 1])
 
     if antithetic:
-        mid_point_re = re_max - np.abs(re_min - re_max) / 2
-        real_samples = real_samples + 2 * (real_samples - mid_point_re)
-        mid_point_im = im_max - np.abs(im_min - im_max) / 2
-        im_samples = im_samples + 2 * (im_samples - mid_point_im)
-        return real_samples + rng.permutation(im_samples * 1j)
+        rng.shuffle(im)
+        mid_point_re = re_max - np.abs(re_min - re_max)/2
+        re_anti = re + 2*(re - mid_point_re)
+        mid_point_im = im_max - np.abs(im_min - im_max)/2
+        im_anti = im + 2*(im - mid_point_im)
 
-    return real_samples + rng.permutation(im_samples * 1j)
+        return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
+    return re + rng.permutation(im * 1j)
+
+re_min, re_max = -2, 0.47,
+im_min, im_max = -1.12, 1.12
+s = 10 ** 5 # sample size
+i = 10**4   # iterations
+N = 10
+rng = np.random.default_rng(0)
+
+new = sample_lh(re_min, re_max, im_min, im_max,rng, 16,rng,antithetic=True)
+
+
+print(new)
+
+
 
 def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antithetic=False):
     """
@@ -73,8 +93,11 @@ def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antitheti
     :param rng: np random generator object
     :return: complex number array of len(n_samples)
     """
+    if antithetic:
+        n_samples //= 2
     if n_samples != math.isqrt(n_samples)**2:
-        raise ValueError("n_samples must be a power of 2.")
+        raise ValueError("n_samples must be a power of 2. If antithetic, n_samples//2 must be power 2 too.")
+
     n_subspaces = math.isqrt(n_samples)
 
     # create 2d square array with n_subspaces **2 entries and n_subspaces rows
@@ -83,28 +106,40 @@ def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antitheti
     # randomly arrange subspaces
     rng_1.shuffle(coordinates_1d.reshape([n_subspaces, n_subspaces]))
     # randomly move points within each subspace
-    imag = coordinates_1d + rng_1.random(size=n_subspaces ** 2)
+    im = coordinates_1d + rng_1.random(size=n_subspaces ** 2)
 
     rng_2.shuffle(coordinates_1d.reshape([n_subspaces, n_subspaces]))
 
     # want every nth element of every kth subarray i.e., all first elems
     trans_coord = coordinates_1d.reshape([n_subspaces, n_subspaces]).T.reshape(-1)
 
-    real = trans_coord.T + rng_2.random(size=n_subspaces ** 2)
+    re = trans_coord.T + rng_2.random(size=n_subspaces ** 2)
 
     # 1. stretch/shrink the square to fit the length of the axis
     # 2. move square to minimal value of each axis
-    imag *= ((im_max - im_min) / n_subspaces**2)
-    imag += im_min
-    real *= (re_max - re_min) / n_subspaces**2
-    real += re_min
-
+    im *= ((im_max - im_min) / n_subspaces**2)
+    im += im_min
+    re *= (re_max - re_min) / n_subspaces**2
+    re += re_min
 
     if antithetic:
-        mid_point_re = re_max - np.abs(re_min - re_max) / 2
-        real = real + 2 * (real - mid_point_re)
-        mid_point_im = im_max - np.abs(im_min - im_max) / 2
-        imag = imag + 2 * (imag - mid_point_im)
-        return real + imag * 1j
+        mid_point_re = re_max - np.abs(re_min - re_max)/2
+        re_anti = re + 2*(re - mid_point_re)
+        mid_point_im = im_max - np.abs(im_min - im_max)/2
+        im_anti = im + 2*(im - mid_point_im)
+        return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
 
-    return real + imag * 1j
+    return re + im * 1j
+
+def convert_antithetic(complex_points, re_min, re_max, im_min, im_max):
+    """
+    Converts a set of sample points into their antithetic/ inverted equivalent.
+    Note: For an antithetic sampling, must use original and inverted points in separate simulations.
+    """
+    re = complex_points.real
+    im = complex_points.imag
+    mid_point_re = re_max - np.abs(re_min - re_max)/2
+    re += 2*(re - mid_point_re)
+    mid_point_im = im_max - np.abs(im_min - im_max)/2
+    im += 2*(im - mid_point_im)
+    return re + im*1j
