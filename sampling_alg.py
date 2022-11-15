@@ -1,11 +1,13 @@
 import numpy as np
 from itertools import product
 import math
+
 rng = np.random.default_rng(0)
 from collections import Counter
 import numba as nb
 
-def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=False):
+
+def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2, antithetic=False):
     """
     Pure random sampling
     :param re_min: minimal real value
@@ -22,15 +24,16 @@ def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=Fa
     im = rng.uniform(low=im_min, high=im_max, size=n_samples)
 
     if antithetic:
-        mid_point_re = re_max - np.abs(re_min - re_max)/2
-        re_anti = re + 2*(re - mid_point_re)
-        mid_point_im = im_max - np.abs(im_min - im_max)/2
-        im_anti = im + 2*(im - mid_point_im)
+        mid_point_re = re_max - np.abs(re_min - re_max) / 2
+        re_anti = re + 2 * (re - mid_point_re)
+        mid_point_im = im_max - np.abs(im_min - im_max) / 2
+        im_anti = im + 2 * (im - mid_point_im)
         return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
 
     return re + im * 1j
 
-def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=False):
+
+def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2, antithetic=False):
     """
     Latin hypercube sampling.
 
@@ -58,26 +61,13 @@ def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2,antithetic=Fa
 
     if antithetic:
         rng.shuffle(im)
-        mid_point_re = re_max - np.abs(re_min - re_max)/2
-        re_anti = re + 2*(re - mid_point_re)
-        mid_point_im = im_max - np.abs(im_min - im_max)/2
-        im_anti = im + 2*(im - mid_point_im)
+        mid_point_re = re_max - np.abs(re_min - re_max) / 2
+        re_anti = re + 2 * (re - mid_point_re)
+        mid_point_im = im_max - np.abs(im_min - im_max) / 2
+        im_anti = im + 2 * (im - mid_point_im)
 
         return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
     return re + rng.permutation(im * 1j)
-
-re_min, re_max = -2, 0.47,
-im_min, im_max = -1.12, 1.12
-s = 10 ** 5 # sample size
-i = 10**4   # iterations
-N = 10
-rng = np.random.default_rng(0)
-
-new = sample_lh(re_min, re_max, im_min, im_max,rng, 16,rng,antithetic=True)
-
-
-print(new)
-
 
 
 def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antithetic=False):
@@ -95,7 +85,7 @@ def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antitheti
     """
     if antithetic:
         n_samples //= 2
-    if n_samples != math.isqrt(n_samples)**2:
+    if n_samples != math.isqrt(n_samples) ** 2:
         raise ValueError("n_samples must be a power of 2. If antithetic, n_samples//2 must be power 2 too.")
 
     n_subspaces = math.isqrt(n_samples)
@@ -117,19 +107,20 @@ def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antitheti
 
     # 1. stretch/shrink the square to fit the length of the axis
     # 2. move square to minimal value of each axis
-    im *= ((im_max - im_min) / n_subspaces**2)
+    im *= ((im_max - im_min) / n_subspaces ** 2)
     im += im_min
-    re *= (re_max - re_min) / n_subspaces**2
+    re *= (re_max - re_min) / n_subspaces ** 2
     re += re_min
 
     if antithetic:
-        mid_point_re = re_max - np.abs(re_min - re_max)/2
-        re_anti = re + 2*(re - mid_point_re)
-        mid_point_im = im_max - np.abs(im_min - im_max)/2
-        im_anti = im + 2*(im - mid_point_im)
+        mid_point_re = re_max - np.abs(re_min - re_max) / 2
+        re_anti = re + 2 * (re - mid_point_re)
+        mid_point_im = im_max - np.abs(im_min - im_max) / 2
+        im_anti = im + 2 * (im - mid_point_im)
         return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
 
     return re + im * 1j
+
 
 def convert_antithetic(complex_points, re_min, re_max, im_min, im_max):
     """
@@ -138,8 +129,8 @@ def convert_antithetic(complex_points, re_min, re_max, im_min, im_max):
     """
     re = complex_points.real
     im = complex_points.imag
-    mid_point_re = re_max - np.abs(re_min - re_max)/2
-    re += 2*(re - mid_point_re)
-    mid_point_im = im_max - np.abs(im_min - im_max)/2
-    im += 2*(im - mid_point_im)
-    return re + im*1j
+    mid_point_re = re_max - np.abs(re_min - re_max) / 2
+    re += 2 * (re - mid_point_re)
+    mid_point_im = im_max - np.abs(im_min - im_max) / 2
+    im += 2 * (im - mid_point_im)
+    return re + im * 1j
