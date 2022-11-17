@@ -8,7 +8,7 @@ from matplotlib import cm
 from collections import Counter
 import pickle
 
-def mc_area(bounds, samples, iter, N):
+def mc_area(bounds, samples, iter, N, anti):
     # Compute area ## ~10min runtime
     A_pr, A_lh, A_ot = [], [], []
     for i in iter:
@@ -16,9 +16,9 @@ def mc_area(bounds, samples, iter, N):
         for s in samples:
             s_pr, s_lh, s_ot = [], [], []
             for n in range(N):
-                s_pr += [[am.area(sa.sample_pr, bounds, s, i)]]
-                s_lh += [[am.area(sa.sample_lh, bounds, s, i)]]
-                s_ot += [[am.area(sa.sample_ot, bounds, s, i)]]
+                s_pr += [[am.area(sa.sample_pr, bounds, s, i, antithetic=anti)]]
+                s_lh += [[am.area(sa.sample_lh, bounds, s, i, antithetic=anti)]]
+                s_ot += [[am.area(sa.sample_ot, bounds, s, i, antithetic=anti)]]
                 print(f'Simulation {n+1, i, s} done')
             i_pr += [[np.mean(s_pr), np.std(s_pr)]]
             i_lh += [[np.mean(s_lh), np.std(s_lh)]]
