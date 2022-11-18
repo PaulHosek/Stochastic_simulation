@@ -10,6 +10,17 @@ import pickle
 
 
 def calculate_area(func, bounds, s, i, antithetic, seed1=0, seed2=1):
+    """
+    # Calculates the area of the mandelbrot set based on a sampling function
+    :param func: the sampling function
+    :param bounds: real min,max ; imaginary min,max
+    :param s: nr samples
+    :param i: nr iterations
+    :param antithetic: bool: if antithetic sample only
+    :param seed1: seed 1 for the sampling method
+    :param seed2: seed 2 for the sampling method
+    :return: the area of the mandelbrot set
+    """
     # Initialize the grid and create samples
     rng = np.random.default_rng(seed1)
     rng2 = np.random.default_rng(seed2)
@@ -27,6 +38,16 @@ def calculate_area(func, bounds, s, i, antithetic, seed1=0, seed2=1):
 
 
 def mc_area(bounds, samples, iter, N, anti):
+    """
+    Calculate the area for 3 sampling methods, for different nr samples and iterations
+    :param bounds:  real min,max ; imaginary min,max
+    :param samples: np array of nr samples to be tested e.g., [4,16,25]
+    :param iter: np array of the nr iterations to be tested
+    :param N: nr of reruns to be used to compute the average
+    :param anti: if should use only inverted points from antithetic should be computed.
+     Note, to compute the area via antithetic sampling, must use both non-antithetic and antithetic values.
+    :return: np array of shape (#simulation, #iterations, #samples)
+    """
     # Compute area ## ~10min runtime
     A_pr, A_lh, A_ot = [], [], []
     for i in iter:
@@ -50,6 +71,13 @@ def mc_area(bounds, samples, iter, N, anti):
 
 
 def picklesave(A_pr, A_lh, A_ot):
+    """
+    save the results from mc_area to a pickle file
+    :param A_pr: area for pure random sampling
+    :param A_lh: area for latin hypercube
+    :param A_ot: area for orthogonal
+    :return: void
+    """
     file_pr = open('pickle/area_pr', 'wb')
     pickle.dump(A_pr, file_pr)
     file_pr.close()
@@ -59,9 +87,15 @@ def picklesave(A_pr, A_lh, A_ot):
     file_ot = open('pickle/area_ot', 'wb')
     pickle.dump(A_ot, file_ot)
     file_ot.close()
+    return
 
 
 def pickleopen(dir=''):
+    """
+    open the results from mc_area
+    :param dir:
+    :return: A_pr, A_lh, A_ot / input to picklesave()
+    """
     file_pr = open(f'{dir}area_pr', 'rb')
     A_pr = pickle.load(file_pr)
     file_pr.close()
@@ -75,6 +109,13 @@ def pickleopen(dir=''):
 
 
 def plotarea3D(A, samples, iterations):
+    """
+    Generate a 3d plot of the sample x iteration landscape.
+    :param A: area values
+    :param samples:  sample values
+    :param iterations: iteration values
+    :return: void
+    """
     fig = plt.figure()
     ax = plt.axes(projection='3d')
     X, Y = np.meshgrid(range(len(samples)), range(len(iterations)))
@@ -85,9 +126,18 @@ def plotarea3D(A, samples, iterations):
     plt.xticks(range(len(samples)), samples)
     plt.yticks(range(len(iterations)), iterations)
     plt.show()
+    return
 
 
 def plotconv(A_pr, A_lh, A_ot, X):
+    """
+    Plot the convergence with error bars of different sampling methods over a range of iterations
+    :param A_pr: area for pure random sampling: np array
+    :param A_lh: area for latin hypercube: np array
+    :param A_ot: area for orthogonal : np array
+    :param X: x axis values/ iterations
+    :return: void
+    """
     fig, ax = plt.subplots()
     plt.errorbar(X, A_pr[:, 0], A_pr[:, 1], fmt='o-', capsize=5, elinewidth=1)
     plt.errorbar(X, A_lh[:, 0], A_lh[:, 1], fmt='o-', capsize=5, elinewidth=1)
@@ -99,6 +149,7 @@ def plotconv(A_pr, A_lh, A_ot, X):
     plt.xlabel('no. of iterations/samples')
     plt.grid()
     plt.show()
+    return
 
 
 if __name__ == "__main__":
