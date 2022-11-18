@@ -11,7 +11,7 @@ import pickle
 
 def calculate_area(func, bounds, s, i, antithetic, seed1=0, seed2=1):
     """
-    # Calculates the area of the mandelbrot set based on a sampling function
+    Calculates the area of the mandelbrot set based on a sampling function
     :param func: the sampling function
     :param bounds: real min,max ; imaginary min,max
     :param s: nr samples
