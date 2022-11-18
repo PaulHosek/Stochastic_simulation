@@ -27,7 +27,6 @@ def calculate_area(func, bounds, s, i, antithetic, seed1=0, seed2=1,arr_samples:
     rng2 = np.random.default_rng(seed2)
     re_min, re_max, im_min, im_max = bounds
     area_total = (np.abs(re_min) + np.abs(re_max)) * (np.abs(im_min) + np.abs(im_max))
-    print(len(arr_samples))
     if len(arr_samples)==0:
         samples = func(re_min, re_max, im_min, im_max, rng, s, rng2, antithetic=antithetic)
     else:
