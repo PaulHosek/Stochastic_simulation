@@ -120,7 +120,7 @@ def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antitheti
     return re + im * 1j
 
 
-def convert_antithetic(complex_points, ):
+def convert_antithetic(complex_points):
     """
     Converts a set of sample points into their antithetic/ inverted equivalent.
     Note: For an antithetic sampling, must use original and inverted points in separate simulations.
