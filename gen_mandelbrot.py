@@ -4,16 +4,15 @@ import matplotlib.pyplot as plt
 from collections import Counter
 import os
 
+########## DEFAULT VALUES #####################
+
 cur_center = -0.8 + 0.0j
 cur_extent = 3.0 + 3.0j
-
-resulution = 256 * 2 ^ 20
-# XY-quadrant that will be inspected
-cur_width = resulution  # (x axis); real numbers
-cur_height = resulution  # (y axis); imaginary
-
-cur_max_iter = resulution  # convergence test search depth
-
+resolution = 256 * 2 ^ 20
+cur_width = resolution  # (x axis); real numbers
+cur_height = resolution  # (y axis); imaginary
+cur_max_iter = resolution  # convergence test search depth
+##############################################
 
 @nb.vectorize
 def mandelbrot(c, max_iter=cur_max_iter):
@@ -51,7 +50,3 @@ def compute_mandelbrot(width=cur_width, height=cur_height, center=cur_center, ex
     c_grid = generate_complex_grid(width=cur_width, height=cur_height, center=cur_center, extent=cur_extent)
 
     return mandelbrot(c_grid, max_iter)
-
-
-# @nb.vectorize
-

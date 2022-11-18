@@ -32,6 +32,7 @@ This notebook imports all relevant files and generates the plots and data found 
 
 | File Name       | Description                                                                                                                                                                                          |     |     |     |
 |-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----|-----|-----|
+|                 |                                                                                                                                                                                                      |     |     |     |
 | sampling_alg.py | Includes functions to generate points on a 2d plane based on pure random, latin hypercube and orthogonal sampling. Further, an function converting points into their antithetic inverse is included. |     |     |     |
 | area.py         | Compares different sampling algorithms on their convergence towards the area of the mandelbrot set. Results are saved in pickle files for further processing.                                        |     |     |     |
 |                 |                                                                                                                                                                                                      |     |     |     |
