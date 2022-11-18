@@ -24,12 +24,13 @@ def sample_pr(re_min, re_max, im_min, im_max, rng, n_samples, rng2, antithetic=F
     im = rng.uniform(low=im_min, high=im_max, size=n_samples)
 
     if antithetic:
-        mid_point_re = re_max - np.abs(re_min - re_max) / 2
-        re_anti = re + 2 * (re - mid_point_re)
-        mid_point_im = im_max - np.abs(im_min - im_max) / 2
-        im_anti = im + 2 * (im - mid_point_im)
-        return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
+        # re = np.array_split(re, 2)[0]
+        # im = np.array_split(im, 2)[0]
 
+        re_anti = -1 * re - 1.54
+        im_anti = -1 * im
+        return re_anti + im_anti * 1j
+        # return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
     return re + im * 1j
 
 
@@ -45,8 +46,7 @@ def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2, antithetic=F
     :param rng: np random generator object
     :return: complex number array of len(n_samples)
     """
-    if antithetic:
-        n_samples //= 2
+
     # generate 2d grid with equal spacing
     real_grid = np.linspace(re_min, re_max, n_samples + 1)
     im_grid = np.linspace(im_min, im_max, n_samples + 1)
@@ -59,14 +59,19 @@ def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2, antithetic=F
         re[square] = rng.uniform(low=real_grid[square], high=real_grid[square + 1])
         im[square] = rng.uniform(low=im_grid[square], high=im_grid[square + 1])
 
+
+
     if antithetic:
         rng.shuffle(im)
-        mid_point_re = re_max - np.abs(re_min - re_max) / 2
-        re_anti = re + 2 * (re - mid_point_re)
-        mid_point_im = im_max - np.abs(im_min - im_max) / 2
-        im_anti = im + 2 * (im - mid_point_im)
+        # re = np.array_split(re, 2)[0]
+        # im = np.array_split(im, 2)[0]
 
-        return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
+        re_anti = -1 * re - 1.54
+        im_anti = -1 * im
+        return re_anti + im_anti * 1j
+        # return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
+
+
     return re + rng.permutation(im * 1j)
 
 
@@ -83,10 +88,9 @@ def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antitheti
     :param rng: np random generator object
     :return: complex number array of len(n_samples)
     """
-    if antithetic:
-        n_samples //= 2
+
     if n_samples != math.isqrt(n_samples) ** 2:
-        raise ValueError("n_samples must be a power of 2. If antithetic, n_samples//2 must be power 2 too.")
+        raise ValueError("n_samples must be a power of 2.")
 
     n_subspaces = math.isqrt(n_samples)
 
@@ -113,24 +117,21 @@ def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antitheti
     re += re_min
 
     if antithetic:
-        mid_point_re = re_max - np.abs(re_min - re_max) / 2
-        re_anti = re + 2 * (re - mid_point_re)
-        mid_point_im = im_max - np.abs(im_min - im_max) / 2
-        im_anti = im + 2 * (im - mid_point_im)
-        return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
+        # re = np.array_split(re, 2)[0]
+        # im = np.array_split(im, 2)[0]
 
+        re_anti = -1 * re - 1.54
+        im_anti = -1 * im
+        return re_anti + im_anti * 1j
+        # return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
     return re + im * 1j
 
 
-def convert_antithetic(complex_points, re_min, re_max, im_min, im_max):
+def convert_antithetic(complex_points,):
     """
     Converts a set of sample points into their antithetic/ inverted equivalent.
     Note: For an antithetic sampling, must use original and inverted points in separate simulations.
     """
-    re = complex_points.real
-    im = complex_points.imag
-    mid_point_re = re_max - np.abs(re_min - re_max) / 2
-    re += 2 * (re - mid_point_re)
-    mid_point_im = im_max - np.abs(im_min - im_max) / 2
-    im += 2 * (im - mid_point_im)
-    return re + im * 1j
+    re_anti = -1 * complex_points.real - 1.54
+    im_anti = -1 * complex_points.imag
+    return re_anti + im_anti * 1j

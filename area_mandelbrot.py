@@ -7,12 +7,13 @@ import os
 cur_center = -0.8 + 0.0j
 cur_extent = 3.0 + 3.0j
 
-resulution = 256*2^20
+resulution = 256 * 2 ^ 20
 # XY-quadrant that will be inspected
 cur_width = resulution  # (x axis); real numbers
-cur_height = resulution# (y axis); imaginary
+cur_height = resulution  # (y axis); imaginary
 
-cur_max_iter = resulution # convergence test search depth
+cur_max_iter = resulution  # convergence test search depth
+
 
 @nb.vectorize
 def mandelbrot(c, max_iter=cur_max_iter):
@@ -23,11 +24,12 @@ def mandelbrot(c, max_iter=cur_max_iter):
 
     # test for divergence with finite iterations
     for k in range(max_iter):
-        z = z**2 + c
+        z = z ** 2 + c
         if np.absolute(z) > 2.0:  # if true then complex number diverges and is not part of set
             break
 
     return k
+
 
 def generate_complex_grid(width=cur_width, height=cur_height, center=cur_center, extent=cur_extent):
     """
@@ -35,8 +37,9 @@ def generate_complex_grid(width=cur_width, height=cur_height, center=cur_center,
     """
     scale = max(extent.real / width, extent.imag / height)
     real_index_grid, imag_index_grid = np.meshgrid(np.arange(0, width), np.arange(0, height))
-    c_grid = center + (real_index_grid - width // 2 + (imag_index_grid - height //2) * 1j) * scale
+    c_grid = center + (real_index_grid - width // 2 + (imag_index_grid - height // 2) * 1j) * scale
     return c_grid
+
 
 def compute_mandelbrot(width=cur_width, height=cur_height, center=cur_center, extent=cur_extent, max_iter=cur_max_iter):
     """
@@ -49,26 +52,6 @@ def compute_mandelbrot(width=cur_width, height=cur_height, center=cur_center, ex
 
     return mandelbrot(c_grid, max_iter)
 
-def random_samples(rng, boundaries, n):
-    re_min, re_max, im_min, im_max = boundaries
-    re = rng.uniform(low=re_min,high=re_max, size=n)
-    im = rng.uniform(low=im_min,high=im_max, size=n) * 1j
-
-    return re + im
 
 # @nb.vectorize
-def area(func, bounds, s, i):
-    # Initialize the grid and create samples
-    rng = np.random.default_rng()
-    rng2 = np.random.default_rng()
-    re_min, re_max, im_min, im_max = bounds
-    area_total = (np.abs(re_min) + np.abs(re_max)) * (np.abs(im_min) + np.abs(im_max))
-    samples = func(re_min,re_max,im_min,im_max,rng,s,rng2)
 
-    # Check if the samples are part of the MB-set
-    res = mandelbrot(samples, i)
-    ct_res = Counter(res)
-
-    # Calculate the area
-    area_mandel = area_total * (ct_res[i-1] / (sum(ct_res.values())))
-    return area_mandel
