@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from collections import Counter
 import pickle
+from typing import Optional
 
-
-def calculate_area(func, bounds, s, i, antithetic, seed1=0, seed2=1):
+def calculate_area(func, bounds, s, i, antithetic, seed1=0, seed2=1,arr_samples:Optional[np.array]=None):
     """
-    Calculates the area of the mandelbrot set based on a sampling function
+    Calculates the area of the mandelbrot set based on a sampling function.
     :param func: the sampling function
     :param bounds: real min,max ; imaginary min,max
     :param s: nr samples
@@ -19,6 +19,7 @@ def calculate_area(func, bounds, s, i, antithetic, seed1=0, seed2=1):
     :param antithetic: bool: if antithetic sample only
     :param seed1: seed 1 for the sampling method
     :param seed2: seed 2 for the sampling method
+    :param arr_samples
     :return: the area of the mandelbrot set
     """
     # Initialize the grid and create samples
@@ -26,8 +27,10 @@ def calculate_area(func, bounds, s, i, antithetic, seed1=0, seed2=1):
     rng2 = np.random.default_rng(seed2)
     re_min, re_max, im_min, im_max = bounds
     area_total = (np.abs(re_min) + np.abs(re_max)) * (np.abs(im_min) + np.abs(im_max))
-    samples = func(re_min, re_max, im_min, im_max, rng, s, rng2, antithetic=antithetic)
-
+    if not arr_samples:
+        samples = func(re_min, re_max, im_min, im_max, rng, s, rng2, antithetic=antithetic)
+    else:
+        samples = arr_samples
     # Check if the samples are part of the MB-set
     res = gm.mandelbrot(samples, i)
     ct_res = Counter(res)

@@ -59,19 +59,12 @@ def sample_lh(re_min, re_max, im_min, im_max, rng, n_samples, rng2, antithetic=F
         re[square] = rng.uniform(low=real_grid[square], high=real_grid[square + 1])
         im[square] = rng.uniform(low=im_grid[square], high=im_grid[square + 1])
 
-
-
     if antithetic:
         rng.shuffle(im)
-        # re = np.array_split(re, 2)[0]
-        # im = np.array_split(im, 2)[0]
 
         re_anti = -1 * re - 1.54
         im_anti = -1 * im
         return re_anti + im_anti * 1j
-        # return np.concatenate((re, re_anti)) + np.concatenate((im, im_anti)) * 1j
-
-
     return re + rng.permutation(im * 1j)
 
 
@@ -127,7 +120,7 @@ def sample_ot(re_min, re_max, im_min, im_max, rng_1, n_samples, rng_2, antitheti
     return re + im * 1j
 
 
-def convert_antithetic(complex_points,):
+def convert_antithetic(complex_points, ):
     """
     Converts a set of sample points into their antithetic/ inverted equivalent.
     Note: For an antithetic sampling, must use original and inverted points in separate simulations.
