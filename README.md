@@ -1,7 +1,9 @@
 # Area of the Mandelbrot set
 
-#### Team 1:
-Youssef el Ghouch (2568930), Andreea D. Hazu (2645225), Paul Hosek (2753446), Nathan M. Jones (2762057) & Licia Tauriello (2743892)
+## Contributors:
+
+* Paul Hosek (2753446)
+* Marcel van de Lagemaat (10886699)
 
 ## Program Overview
 Goal of this work is to investigate the area of the mandelbrot set using Monte Carlo Integration.
@@ -26,36 +28,17 @@ This notebook imports all relevant files and generates the plots and data found 
 ### Repository structure
 
 
+| File Name           | Description                                                                                                                                                                                          |
+|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| gen_mandelbrot.py   | Functions related to the mandelbrot including monte-carlo integration and generating a complex grid to draw the mandelbrot on.                                                                       |
+| sampling_alg.py     | Includes functions to generate points on a 2-d plane based on pure random, latin hypercube and orthogonal sampling. Further, a function converting points into their antithetic inverse is included. |
+| area.py             | Compares different sampling algorithms on their convergence towards the area of the mandelbrot set. Results are saved in pickle files for further processing.                                        |
+| figures (directory) | Includes all figures generated from plotting and drawing the mandelbrot set.                                                                                                                         |
+| legacy (directory)  | Lists files not relevant for the current version of the program.                                                                                                                                     |
+|                     |                                                                                                                                                                                                      |
+|                     |                                                                                                                                                                                                      |
+|                     |                                                                                                                                                                                                      |
 
-
-### File Descriptions
-
-| File Name       | Description                                                                                                                                                                                          |     |     |     |
-|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----|-----|-----|
-|                 |                                                                                                                                                                                                      |     |     |     |
-| sampling_alg.py | Includes functions to generate points on a 2d plane based on pure random, latin hypercube and orthogonal sampling. Further, an function converting points into their antithetic inverse is included. |     |     |     |
-| area.py         | Compares different sampling algorithms on their convergence towards the area of the mandelbrot set. Results are saved in pickle files for further processing.                                        |     |     |     |
-|                 |                                                                                                                                                                                                      |     |     |     |
-|                 |                                                                                                                                                                                                      |     |     |     |
-|                 |                                                                                                                                                                                                      |     |     |     |
-|                 |                                                                                                                                                                                                      |     |     |     |
-|                 |                                                                                                                                                                                                      |     |     |     |
-```md
-python area.py
-
-```
-```sh
-python utils.py
-```
-```sh
-python task2_tuning.py
-```
-```sh
-python parameter_tests.py
-```
-```sh
-python bar_enemies.py
-```
 
 
 

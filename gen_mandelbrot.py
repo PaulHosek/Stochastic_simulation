@@ -14,10 +14,12 @@ cur_height = resolution  # (y axis); imaginary
 cur_max_iter = resolution  # convergence test search depth
 ##############################################
 
-@nb.vectorize
+@nb.vectorize(nopython=True)
 def mandelbrot(c, max_iter=cur_max_iter):
     """
     Convergence test by iteration for single complex number.
+    Takes in an array of complex numbers.
+    Parallelises monte-carlo integration by circumventing python's GIL.
     """
     z = 0
 
@@ -33,6 +35,7 @@ def mandelbrot(c, max_iter=cur_max_iter):
 def generate_complex_grid(width=cur_width, height=cur_height, center=cur_center, extent=cur_extent):
     """
     Generate complex number grid to pass to the iteration function.
+    This function is needed to draw the images.
     """
     scale = max(extent.real / width, extent.imag / height)
     real_index_grid, imag_index_grid = np.meshgrid(np.arange(0, width), np.arange(0, height))
@@ -43,6 +46,7 @@ def generate_complex_grid(width=cur_width, height=cur_height, center=cur_center,
 def compute_mandelbrot(width=cur_width, height=cur_height, center=cur_center, extent=cur_extent, max_iter=cur_max_iter):
     """
     Compute mandelbrot set by generating complex grid and testing for divergence for each point.
+    This function is needed to draw the images.
     """
     niters = np.zeros((width, height), int)
     scale = max(extent.real / width, extent.imag / height)
