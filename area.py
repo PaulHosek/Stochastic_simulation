@@ -9,7 +9,7 @@ from collections import Counter
 import pickle
 from typing import Optional
 
-def calculate_area(func, bounds, s, i, antithetic, seed1=0, seed2=1,arr_samples:Optional[np.array]=None):
+def calculate_area(func, bounds, s, i, antithetic, seed1=0, seed2=1,arr_samples:Optional[list]=[]):
     """
     Calculates the area of the mandelbrot set based on a sampling function.
     :param func: the sampling function
@@ -27,7 +27,8 @@ def calculate_area(func, bounds, s, i, antithetic, seed1=0, seed2=1,arr_samples:
     rng2 = np.random.default_rng(seed2)
     re_min, re_max, im_min, im_max = bounds
     area_total = (np.abs(re_min) + np.abs(re_max)) * (np.abs(im_min) + np.abs(im_max))
-    if not arr_samples:
+    print(len(arr_samples))
+    if len(arr_samples)==0:
         samples = func(re_min, re_max, im_min, im_max, rng, s, rng2, antithetic=antithetic)
     else:
         samples = arr_samples
