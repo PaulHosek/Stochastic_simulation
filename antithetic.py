@@ -1,7 +1,7 @@
 import sampling_alg as sa
 import area as a
 import numpy as np
-from scipy.stats import bootstrap, ttest_ind
+from scipy.stats import ttest_ind
 import matplotlib.pyplot as plt
 
 
