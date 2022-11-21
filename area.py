@@ -7,6 +7,7 @@ from matplotlib import cm
 from collections import Counter
 import pickle
 from typing import Optional
+from decimal import Decimal as dec
 
 def calculate_area(func, bounds, s, i, antithetic, seed1=None, seed2=None, arr_samples:Optional[list]=[]):
     """
@@ -159,6 +160,23 @@ def plotarea3D(A, samples, iterations):
     return
 
 
+def heatmap_se(data, samples, iterations):
+    fig, ax = plt.subplots()
+    im = ax.imshow(data, cmap='plasma')
+
+    # Show all ticks and label them with the respective list entries
+    ax.set_xticks(np.arange(len(samples)), labels=samples)
+    ax.set_yticks(np.arange(len(iterations)), labels=iterations)
+    ax.set_xlabel('Samples')
+    ax.set_ylabel('Iterations')
+    for i in range(len(iterations)):
+        for j in range(len(samples)):
+            text = ax.text(j, i, '%.2E' % dec(data[i, j]),
+                        ha="center", va="center", color="w")
+
+    plt.show()
+
+
 def plotconv(A_pr, A_lh, A_ot, X, xax):
     """
     Plot the convergence with error bars of different sampling methods over a range of iterations
@@ -197,12 +215,27 @@ if __name__ == "__main__":
     iterations = [100, 250, 500, 1000, 1500, 2000, 3000, 4000]
     bounds = -2, 0.47, -1.12, 1.12  # real-min,max,im-min,max
 
-    A_pr, A_lh, A_ot = mc_area(bounds, samples, iterations, 100, True)  # 100
-    picklesave(A_pr, A_lh, A_ot, '_anti100')
-    # A_pr, A_lh, A_ot = pickleopen('pickle/', '_100it')
+    # A_pr, A_lh, A_ot = mc_area(bounds, samples, iterations, 100, True)  # 100
+    # picklesave(A_pr, A_lh, A_ot, '_anti100')
+    A_pr, A_lh, A_ot = pickleopen('pickle/', '__anti100')
 
-    # plotconv(A_pr[:, -1, :], A_lh[:, -1, :], A_ot[:, -1, :], iterations)
+    heatmap_se(A_pr[:,:,1], samples, iterations)
+    heatmap_se(A_lh[:,:,1], samples, iterations)
+    heatmap_se(A_ot[:,:,1], samples, iterations)
 
-    plotarea3D(A_pr, samples, iterations)
-    plotarea3D(A_lh, samples, iterations)
-    plotarea3D(A_ot, samples, iterations)
+    # ci_pr = confidint(A_pr[:,:,1], 100, 1.96)
+    # ci_lh = confidint(A_lh[:,:,1], 100, 1.96)
+    # ci_ot = confidint(A_ot[:,:,1], 100, 1.96)
+
+    # print(A_pr, A_lh, A_ot)
+
+    # Remove the first element of samples and iterations for a more clear plot
+    # pr_it, lh_it, ot_it = A_pr[:,-1,:], A_lh[:,-1,:], A_ot[:,-1,:]
+    # pr_sm, lh_sm, ot_sm = A_pr[-1,:,:], A_lh[-1,:,:], A_ot[-1,:,:]
+    ## Shape of A:  A[iterations, samples, (area, ci)]
+    # plotconv(pr_it[1:], lh_it[1:], ot_it[1:], iterations[1:], 'iterations')
+    # plotconv(pr_sm[1:], lh_sm[1:], ot_sm[1:], samples[1:], 'samples')
+
+    # plotarea3D(A_pr, samples, iterations)
+    # plotarea3D(A_lh, samples, iterations)
+    # plotarea3D(A_ot, samples, iterations)
