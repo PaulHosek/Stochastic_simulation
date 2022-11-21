@@ -32,6 +32,7 @@ The authors hope this will simply review of the codebase at later points in time
 
 | File Name           | Description                                                                                                                                                                                          |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|Final Notebook | Named "MarcelvandeLagemaat_10886699_PaulHosek_12637033_1.ipynb". This notebook aggregates all the rest of the respository.|
 | gen_mandelbrot.py   | Functions related to the mandelbrot including monte-carlo integration and generating a complex grid to draw the mandelbrot on.                                                                       |
 | sampling_alg.py     | Includes functions to generate points on a 2-d plane based on pure random, latin hypercube and orthogonal sampling. Further, a function converting points into their antithetic inverse is included. |
 | area.py             | Compares different sampling algorithms on their convergence towards the area of the mandelbrot set. Results are saved in pickle files for further processing.    
