@@ -176,10 +176,7 @@ def plotconv(A_pr, A_lh, A_ot, X):
 
 
 if __name__ == "__main__":
-    # samples = np.array([[j * 10 ** i for j in [1, 4]] for i in range(2, 6, 2)]).flatten()
-    # samples = (np.arange(7, 17) ** 2)  # sample size
-    # print(samples)
-
+    # parameters
     samples = [ i ** 2 for i in [10, 20, 32, 45, 64, 90, 100]]
     iterations = [100, 250, 500, 1000, 1500, 2000, 3000, 4000]
     bounds = -2, 0.47, -1.12, 1.12  # real-min,max,im-min,max
