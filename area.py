@@ -50,16 +50,32 @@ def mc_area(bounds, samples, iter, N, anti):
      Note, to compute the area via antithetic sampling, must use both non-antithetic and antithetic values.
     :return: np array of shape (#simulation, #iterations, #samples)
     """
-    # Compute area ## ~10min runtime
+    rng = np.random.default_rng(0)
     A_pr, A_lh, A_ot = [], [], []
     for i in iter:
         i_pr, i_lh, i_ot = [], [], []
         for s in samples:
             s_pr, s_lh, s_ot = [], [], []
             for n in range(N):
-                s_pr += [[calculate_area(sa.sample_pr, bounds, s, i, antithetic=anti)]]
-                s_lh += [[calculate_area(sa.sample_lh, bounds, s, i, antithetic=anti)]]
-                s_ot += [[calculate_area(sa.sample_ot, bounds, s, i, antithetic=anti)]]
+                if anti:
+                    seed1 = s * n + rng.integers(0, 1000)
+                    seed2 = s * (N + n) + rng.integers(0, 1000)
+
+                    normal_pr = [calculate_area(sa.sample_pr, bounds, s, i, False, seed1=seed1, seed2=seed2)]
+                    normal_lh = [calculate_area(sa.sample_lh, bounds, s, i, False, seed1=seed1, seed2=seed2)]
+                    normal_ot = [calculate_area(sa.sample_ot, bounds, s, i, False, seed1=seed1, seed2=seed2)]
+
+                    anti_pr = [calculate_area(sa.sample_pr, bounds, s, i, True, seed1=seed1, seed2=seed2)]
+                    anti_lh = [calculate_area(sa.sample_lh, bounds, s, i, True, seed1=seed1, seed2=seed2)]
+                    anti_ot = [calculate_area(sa.sample_ot, bounds, s, i, True, seed1=seed1, seed2=seed2)]
+
+                    s_pr += [np.mean(np.array([normal_pr, anti_pr]), axis=1)]
+                    s_lh += [np.mean(np.array([normal_lh, anti_lh]), axis=1)]
+                    s_ot += [np.mean(np.array([normal_ot, anti_ot]), axis=1)]
+                else:
+                    s_pr += [[calculate_area(sa.sample_pr, bounds, s, i, antithetic=anti)]]
+                    s_lh += [[calculate_area(sa.sample_lh, bounds, s, i, antithetic=anti)]]
+                    s_ot += [[calculate_area(sa.sample_ot, bounds, s, i, antithetic=anti)]]
                 print(f'Simulation {n + 1, i, s} done')
             i_pr += [[np.mean(s_pr), np.std(s_pr)]]
             i_lh += [[np.mean(s_lh), np.std(s_lh)]]
@@ -143,7 +159,7 @@ def plotarea3D(A, samples, iterations):
     return
 
 
-def plotconv(A_pr, A_lh, A_ot, X):
+def plotconv(A_pr, A_lh, A_ot, X, xax):
     """
     Plot the convergence with error bars of different sampling methods over a range of iterations
     :param A_pr: area for pure random sampling: np array
@@ -154,10 +170,10 @@ def plotconv(A_pr, A_lh, A_ot, X):
     """
     fig, ax = plt.subplots()
     plt.errorbar(  X, A_pr[:, 0], A_pr[:, 1], 
-                                fmt='o-', color='blue', alpha=0.5,
+                                fmt='o-', color='blue', alpha=0.4,
                                 capsize=5, elinewidth=1)
     _, _, err = plt.errorbar(   X, A_lh[:, 0], A_lh[:, 1], 
-                                fmt='s--', color='red', alpha=0.9, 
+                                fmt='s--', color='red', alpha=0.4, 
                                 capsize=5, elinewidth=1, linewidth=2)
     for e in err: e.set_linestyle('--'), e.set_linewidth(2)
     _, _, err = plt.errorbar(  X, A_ot[:, 0], A_ot[:, 1], 
@@ -169,7 +185,7 @@ def plotconv(A_pr, A_lh, A_ot, X):
     plt.legend(['Reference area', 'PR', 'LH', 'OT'])
     ax.set_xscale('log')
     plt.ylabel('Area')
-    plt.xlabel('no. of iterations')
+    plt.xlabel(f'no. of {xax}')
     plt.grid()
     plt.show()
     return
@@ -181,9 +197,9 @@ if __name__ == "__main__":
     iterations = [100, 250, 500, 1000, 1500, 2000, 3000, 4000]
     bounds = -2, 0.47, -1.12, 1.12  # real-min,max,im-min,max
 
-    # A_pr, A_lh, A_ot = mc_area(bounds, samples, iterations, 100, False)  # 100
-    # picklesave(A_pr, A_lh, A_ot, INSERT NAME)
-    A_pr, A_lh, A_ot = pickleopen('pickle/', '_100it')
+    A_pr, A_lh, A_ot = mc_area(bounds, samples, iterations, 100, True)  # 100
+    picklesave(A_pr, A_lh, A_ot, '_anti100')
+    # A_pr, A_lh, A_ot = pickleopen('pickle/', '_100it')
 
     # plotconv(A_pr[:, -1, :], A_lh[:, -1, :], A_ot[:, -1, :], iterations)
 
