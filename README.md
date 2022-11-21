@@ -37,7 +37,5 @@ The authors hope this will simply review of the codebase at later points in time
 | area.py             | Compares different sampling algorithms on their convergence towards the area of the mandelbrot set. Results are saved in pickle files for further processing.    
 | antithetic.py  | Functions relevant for testing the effectivness of the antithetic variates.                                                                                                                                  |
 | pickle (directory)  | Stores pickle files generated to store simulation results.                                                                                                                                    |
-
-| figures (directory) | Includes all figures generated from plotting and drawing the mandelbrot set.                                                                                                                         |
-
+| figures (directory) | Includes all figures generated from plotting and drawing the mandelbrot set. |                                                                                                                        |
 | old (directory)  | Lists files not relevant for the current version of the program.                                                                                                                                     |
