@@ -25,7 +25,7 @@ Effectiveness of all approaches is compared.
 
 All results are aggregated into a single Jupyter Notebook named MarcelvandeLagemaat_10886699_PaulHosek_12637033_1.ipynb.
 This notebook imports all relevant files and generates the plots and data found in the report.
-The authors hope this will simply review of the codebase at later points in time.
+The authors hope this will simplify review of the codebase at later points in time.
 
 ## Repository structure
 
