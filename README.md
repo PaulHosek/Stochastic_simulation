@@ -1,6 +1,6 @@
 # Area of the Mandelbrot set
 
-![alt text](figures/mandelbrot_magenta_final.svg)
+![alt text](figures/mandelbrot_final.svg)
 ## Contributors:
 
 * Paul Hosek (2753446)
